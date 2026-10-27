@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      remixicon:
+        specifier: ^4.9.1
+        version: 4.9.1
     devDependencies:
       '@sveltejs/adapter-auto':
         specifier: ^7.0.1
@@ -378,6 +382,9 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
+  remixicon@4.9.1:
+    resolution: {integrity: sha512-36gLSoujkabnCFZFDyP17VNh9piuBA/rsXUb4auSJWLGsHVXtmxLj/EM5FjaEAGnk8oIAj1Azob/DZ2N+90lAQ==}
+
   rolldown@1.2.11:
     resolution: {integrity: sha512-qpSwIyz0jHQq5qXBTNxFmE6664rJ7O+4TvPFOiOaBSrz8IOHc1koKKSqTM2H6u1UG1+TveuC6vaDHKXFOvb1Kw==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -689,6 +696,8 @@ snapshots:
       svelte: 5.57.1
 
   prettier@3.9.9: {}
+
+  remixicon@4.9.1: {}
 
   rolldown@1.2.11:
     dependencies:

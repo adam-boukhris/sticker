@@ -1,0 +1,63 @@
+.screen-stickers {
+	position: fixed;
+	inset: 0;
+	z-index: 45;
+	pointer-events: none;
+}
+.screen-sticker {
+	position: fixed;
+	left: clamp(8px, var(--left), calc(100vw - var(--size) - 8px));
+	top: clamp(76px, var(--top), calc(100dvh - var(--size) - 8px));
+	width: var(--size);
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: grab;
+	touch-action: none;
+	pointer-events: auto;
+	filter: drop-shadow(3px 6px 2px #2c11263b);
+	transform: translate3d(var(--drag-x, 0px), var(--drag-y, 0px), 0);
+	transition: filter 200ms ease;
+}
+.screen-sticker.is-dragging {
+	z-index: 1;
+	cursor: grabbing;
+	filter: drop-shadow(7px 12px 3px #2c11264d);
+}
+.screen-sticker-art {
+	display: block;
+	transform-origin: center;
+}
+.screen-sticker img {
+	display: block;
+	width: 100%;
+	height: auto;
+	user-select: none;
+	-webkit-user-drag: none;
+}
+.screen-sticker.drop-shake .screen-sticker-art {
+	animation: sticker-drop-shake 260ms ease-in-out;
+}
+@keyframes sticker-drop-shake {
+	0%,
+	100% {
+		transform: rotate(0);
+	}
+	30% {
+		transform: rotate(-2deg);
+	}
+	65% {
+		transform: rotate(1.5deg);
+	}
+}
+@media (max-width: 560px) {
+	.screen-sticker {
+		--size: var(--mobile-size) !important;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.screen-sticker-art,
+	.screen-sticker.drop-shake .screen-sticker-art {
+		animation: none;
+	}
+}

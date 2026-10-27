@@ -1,15 +1,44 @@
 <script>
-	import { packs, WHATSAPP_NUMBER, EMAIL } from '$lib/data.js';
+	import { onMount } from 'svelte';
+	import { reveal } from '$lib/motion.js';
+	import Icon from '$lib/components/Icon.svelte';
+	import PackCard from '$lib/components/PackCard.svelte';
+	import FeatureCard from '$lib/components/FeatureCard.svelte';
+	import FloatingStickers from '$lib/components/FloatingStickers.svelte';
+	import './home.css';
 
-	let menuOpen = $state(false);
+	let { data } = $props();
+	let catalog = $derived(data.catalog);
 	let favorites = $state([]);
-	let soundOn = $state(false);
+	let soundOn = $state(true);
 	let toast = $state('');
 	let toastTimeout;
+	let heroSection;
 
-	function closeMenu() {
-		menuOpen = false;
-	}
+	onMount(() => {
+		const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
+		let frame = 0;
+		function updateScroll() {
+			frame = 0;
+			if (!heroSection || preference.matches) return;
+			const rect = heroSection.getBoundingClientRect();
+			const progress = Math.min(1, Math.max(0, -rect.top / Math.max(rect.height, 1)));
+			heroSection.style.setProperty('--hero-scroll', progress.toFixed(3));
+		}
+		function requestUpdate() {
+			if (!frame) frame = requestAnimationFrame(updateScroll);
+		}
+		updateScroll();
+		window.addEventListener('scroll', requestUpdate, { passive: true });
+		window.addEventListener('resize', requestUpdate, { passive: true });
+		return () => {
+			window.removeEventListener('scroll', requestUpdate);
+			window.removeEventListener('resize', requestUpdate);
+			if (frame) cancelAnimationFrame(frame);
+			clearTimeout(toastTimeout);
+		};
+	});
+
 	function toggleFavorite(id) {
 		favorites = favorites.includes(id)
 			? favorites.filter((favorite) => favorite !== id)
@@ -39,41 +68,13 @@
 	<meta name="theme-color" content="#ffe0dd" />
 </svelte:head>
 
-<header class="site-header" id="home">
-	<div class="container nav-inner">
-		<a href="/" class="wordmark" aria-label="StickeRiri home" onclick={closeMenu}>StickeRiri</a>
-		<nav class:visible={menuOpen} id="main-nav" aria-label="Main navigation">
-			<a href="#home" onclick={closeMenu}>Home</a>
-			<a href="#shop" onclick={closeMenu}>Shop</a>
-			<a href="#shop" onclick={closeMenu}>▸ Shop</a>
-			<a href="#gallery" onclick={closeMenu}>Gallery</a>
-			<a href="#about" onclick={closeMenu}>About Us</a>
-			<a href="#footer" onclick={closeMenu}>▸ More / المزيد</a>
-			<a class="mobile-order btn btn-primary" href="/order" onclick={closeMenu}
-				>Order Now / اطلب توا <span aria-hidden="true">➜</span></a
-			>
-		</nav>
-		<a class="btn btn-primary nav-cta" href="/order"
-			>↗ Order Now / اطلب توا <span aria-hidden="true">➜</span></a
-		>
-		<button
-			type="button"
-			class="menu-toggle"
-			aria-expanded={menuOpen}
-			aria-controls="main-nav"
-			aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-			onclick={() => (menuOpen = !menuOpen)}
-		>
-			<span></span><span></span><span></span>
-		</button>
-	</div>
-</header>
-
 <main>
-	<section class="hero-section" aria-labelledby="hero-heading">
+	<section class="hero-section" bind:this={heroSection} aria-labelledby="hero-heading">
 		<div class="container hero-grid">
-			<div class="hero-copy">
-				<span class="eyebrow-pill yellow">✺ INSTANT SELECTION : NO PHOTOS NEEDED</span>
+			<div class="hero-copy" use:reveal>
+				<span class="eyebrow-pill yellow"
+					><Icon name="sparkling-line" /> INSTANT SELECTION : NO PHOTOS NEEDED</span
+				>
 				<h1 id="hero-heading">
 					Curated sticker<br class="desktop-break" /> packs,<br /><span class="underlined"
 						>ready to ship</span
@@ -89,17 +90,19 @@
 				</p>
 				<div class="hero-actions">
 					<a href="#shop" class="btn btn-primary"
-						>Explore our Packs <span class="arrow" aria-hidden="true">➜</span></a
+						>Explore our Packs <span class="arrow"><Icon name="arrow-right-line" /></span></a
 					>
 					<a href="/order?pack=custom" class="btn btn-light"
-						>✣ Want custom photo stickers instead?</a
+						><Icon name="magic-line" /> Want custom photo stickers instead?</a
 					>
 				</div>
 			</div>
 
-			<aside class="perks-card" aria-label="3 Simple Perks">
+			<aside class="perks-card" use:reveal aria-label="3 Simple Perks">
 				<div class="perks-top">
-					<span class="perks-label">✧ Quick Guide</span><span class="perks-heart">♥</span>
+					<span class="perks-label"><Icon name="sparkling-line" /> Quick Guide</span><span
+						class="perks-heart"><Icon name="heart-fill" /></span
+					>
 				</div>
 				<h2>3 Simple Perks</h2>
 				<p class="perks-ar" dir="rtl" lang="ar">ثلاثة ميزات للطلب</p>
@@ -118,67 +121,30 @@
 				</p>
 			</aside>
 		</div>
+		<FloatingStickers stickers={catalog.stickers} />
 	</section>
 
 	<section class="shop-section" id="shop" aria-labelledby="shop-heading">
 		<div class="container">
-			<div class="shop-heading-row" id="gallery">
+			<div class="shop-heading-row" id="gallery" use:reveal>
 				<div>
 					<p class="small-kicker">CURATED COLLECTIONS · CHOOSE YOUR THEME</p>
 					<h2 class="section-title" id="shop-heading">Ready-Made Packs</h2>
 					<p class="section-ar" dir="rtl" lang="ar">باكات حاضرين حسب ذوقك واختيارك</p>
 				</div>
 				<button class="sound-button" type="button" aria-pressed={soundOn} onclick={toggleSound}
-					>{soundOn ? '♫ Sound On' : '♫ Sound Off'}</button
+					><Icon name={soundOn ? 'volume-up-line' : 'volume-mute-line'} /> Sound {soundOn
+						? 'On'
+						: 'Off'}</button
 				>
 			</div>
 			<div class="section-rule"></div>
 
 			<div class="packs-grid">
-				{#each packs as pack (pack.id)}
-					<article class="pack-card {pack.tone}">
-						<div class="pack-image-wrap">
-							<img
-								class="pack-image"
-								src={pack.image}
-								alt="{pack.name} sticker artwork"
-								width="560"
-								height="560"
-								loading="lazy"
-							/>
-						</div>
-						<div class="pack-content">
-							<div class="pack-title-row">
-								<h3>{pack.name}</h3>
-								<span class="stock-pill">Ready-Made</span>
-							</div>
-							<p class="pack-ar" dir="rtl" lang="ar">{pack.arabic}</p>
-							<div class="pack-specs"><span>✓ {pack.count}</span><span>{pack.finish}</span></div>
-							<p class="pack-description">{pack.description}</p>
-							<p class="pack-description-ar" dir="rtl" lang="ar">{pack.descriptionAr}</p>
-							<div class="price-row">
-								<span>Pricing details</span><strong>Set upon confirmation</strong>
-							</div>
-							<div class="pack-actions">
-								<a
-									class="btn btn-primary pack-order"
-									href="/order?pack={encodeURIComponent(pack.id)}"
-									>▣ Order This Pack <span class="arrow" aria-hidden="true">➜</span></a
-								>
-								<button
-									type="button"
-									class:active={favorites.includes(pack.id)}
-									class="favorite-button"
-									aria-label={favorites.includes(pack.id)
-										? `Remove ${pack.name} from favorites`
-										: `Add ${pack.name} to favorites`}
-									aria-pressed={favorites.includes(pack.id)}
-									onclick={() => toggleFavorite(pack.id)}
-									>{favorites.includes(pack.id) ? '♥' : '♡'}</button
-								>
-							</div>
-						</div>
-					</article>
+				{#each catalog.packs as pack, index (pack.id)}
+					<div class="pack-reveal" style:--reveal-index={index % 3} use:reveal>
+						<PackCard {pack} favorite={favorites.includes(pack.id)} onFavorite={toggleFavorite} />
+					</div>
 				{/each}
 			</div>
 		</div>
@@ -186,8 +152,10 @@
 
 	<section class="order-prompt-section" id="about" aria-labelledby="prompt-heading">
 		<div class="container">
-			<div class="order-prompt">
-				<span class="eyebrow-pill yellow">✺ EASY ORDERING · RAPID-POSTE NATIONWIDE</span>
+			<div class="order-prompt" use:reveal>
+				<span class="eyebrow-pill yellow"
+					><Icon name="sparkling-line" /> EASY ORDERING · RAPID-POSTE NATIONWIDE</span
+				>
 				<h2 id="prompt-heading">
 					Found your favorite<br /> pack?<br />Submit your<br /><span class="underlined"
 						>request</span
@@ -202,23 +170,13 @@
 					اطلب الباك إلي تحبه، نتواصلوا معاك للتأكيد ومن بعد نبعثوهولك.
 				</p>
 				<div class="feature-grid">
-					<div class="feature">
-						<b>♧ Phone Confirmation</b><span
-							>We'll call to confirm your order details before preparing.</span
-						>
-					</div>
-					<div class="feature">
-						<b>♙ Rapid-Poste Shipping</b><span
-							>Fast delivery across all 24 Tunisian governorates.</span
-						>
-					</div>
-					<div class="feature">
-						<b>♡ Quality Guarantee</b><span>Each sticker pack is prepared with care.</span>
-					</div>
+					{#each catalog.features as feature (feature.id)}
+						<FeatureCard {...feature} />
+					{/each}
 				</div>
 				<div class="prompt-actions">
 					<a href="/order" class="btn btn-primary"
-						>Go to Order Form <span class="arrow" aria-hidden="true">➜</span></a
+						>Go to Order Form <span class="arrow"><Icon name="arrow-right-line" /></span></a
 					>
 					<a href="/order#delivery" class="btn btn-light">View Prices &amp; Delivery Info</a>
 				</div>
@@ -226,85 +184,6 @@
 		</div>
 	</section>
 </main>
-
-<footer class="site-footer" id="footer">
-	<div class="container">
-		<div class="footer-banner">
-			<div>
-				<span class="eyebrow-pill yellow"
-					>✺ Handmade with Love in Tunisia / مصنوع بكل حب في تونس</span
-				>
-				<h2>A little piece of you / قطعة صغيرة منك</h2>
-				<p>
-					Ready-made aesthetic packs or custom stickers crafted from your favorite photos. Fast
-					delivery nationwide via Rapid-Poste.
-				</p>
-				<p class="footer-banner-ar" dir="rtl" lang="ar">
-					باكات واجدين ولا ستيكرز مخصصين من تصاورك. توصيل لكامل تونس بالبريد السريع.
-				</p>
-			</div>
-			<a class="btn btn-primary" href="/order"
-				>Place Order / اطلب توا <span aria-hidden="true">➜</span></a
-			>
-		</div>
-
-		<div class="footer-brand">StickeRiri</div>
-		<p class="footer-subhead">Tunisian Sticker Shop / بوتيك ستيكرز تونسي</p>
-		<div class="squiggle" aria-hidden="true">〰〰 〰</div>
-
-		<div class="footer-columns">
-			<div class="footer-col footer-links">
-				<h3>EXPLORE / تصفح</h3>
-				<a href="#home">Home</a><a href="#shop">Shop</a><a href="#shop">Ready-Made Packs</a><a
-					href="/order?pack=custom">Make Your Own</a
-				><a href="#gallery">Gallery</a><a href="#about">About Us</a><a href="/order">Order Form</a
-				><a href="/order#delivery">Prices &amp; Delivery</a>
-			</div>
-			<div class="footer-col">
-				<h3>HOW IT WORKS / كيفاش نشري</h3>
-				<div class="footer-mini-card">
-					<b>1. Choose &amp; Submit</b><span>Pick a ready pack or custom photo package.</span>
-				</div>
-				<div class="footer-mini-card">
-					<b>2. WhatsApp Confirmation</b><span
-						>We confirm by phone &amp; you send photos on WhatsApp.</span
-					>
-				</div>
-				<div class="footer-mini-card">
-					<b>3. Rapid-Poste Delivery</b><span>Delivery across all 24 governorates.</span>
-				</div>
-			</div>
-			<div class="footer-col">
-				<h3>CONTACT &amp; WHATSAPP / تواصل معنا</h3>
-				<a href="tel:+{WHATSAPP_NUMBER}" class="footer-contact">♧ +{WHATSAPP_NUMBER}</a>
-				<a
-					href="https://wa.me/{WHATSAPP_NUMBER}"
-					rel="noopener noreferrer"
-					target="_blank"
-					class="footer-contact whatsapp">♧ WhatsApp for Photos</a
-				>
-				<a href="mailto:{EMAIL}" class="footer-contact">✉ {EMAIL}</a>
-			</div>
-			<div class="footer-col">
-				<div class="footer-delivery">
-					<h3>♧ Rapid-Poste Tunisia</h3>
-					<p>
-						We deliver to all 24 Tunisian governorates. Orders are prepared with utmost care and
-						delivered straight to your door.
-					</p>
-					<p dir="rtl" lang="ar">توصيل سريع لكافة الولايات التونسية الـ 24</p>
-					<hr />
-					<b>✧ No online payment</b>
-				</div>
-			</div>
-		</div>
-		<div class="copyright">
-			<span>© 2026 StickeRiri. All rights reserved. <span class="red-heart">♥</span></span><span
-				>Tunisia 🇹🇳 تونس · Vinyl &amp; Die-Cut Stickers</span
-			>
-		</div>
-	</div>
-</footer>
 
 {#if toast}
 	<div class="toast" role="status">{toast}</div>

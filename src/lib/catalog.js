@@ -8,7 +8,6 @@ export function validateCatalog(value) {
 		!Array.isArray(value.packs) ||
 		!Array.isArray(value.governorates) ||
 		!Array.isArray(value.features) ||
-		!Array.isArray(value.stickers) ||
 		!Array.isArray(value.screenStickers) ||
 		value.packs.some((pack) => !pack.id || !pack.name || !pack.image?.url || !pack.image?.alt)
 	) {

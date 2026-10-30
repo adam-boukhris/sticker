@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import './ScreenStickers.css';
 
-	let { stickers = [] } = $props();
+	let { stickers = [], placement = 'hero' } = $props();
 	let layer;
 	let activeDrag = null;
 	const positions = new Map();
@@ -10,9 +10,10 @@
 
 	function moveBy(node, id, dx, dy) {
 		const rect = node.getBoundingClientRect();
+		const bounds = layer.getBoundingClientRect();
 		const current = positions.get(id) || { x: 0, y: 0 };
-		const targetX = Math.max(8, Math.min(rect.left + dx, window.innerWidth - rect.width - 8));
-		const targetY = Math.max(8, Math.min(rect.top + dy, window.innerHeight - rect.height - 8));
+		const targetX = Math.max(bounds.left, Math.min(rect.left + dx, bounds.right - rect.width));
+		const targetY = Math.max(bounds.top, Math.min(rect.top + dy, bounds.bottom - rect.height));
 		const next = { x: current.x + targetX - rect.left, y: current.y + targetY - rect.top };
 		positions.set(id, next);
 		node.style.setProperty('--drag-x', `${next.x}px`);
@@ -93,7 +94,7 @@
 	});
 </script>
 
-<div class="screen-stickers" bind:this={layer} aria-label="Move the stickers around the screen">
+<div class="screen-stickers {placement}" bind:this={layer} aria-label="Move the stickers around this section">
 	{#each stickers as sticker (sticker.id)}
 		<button
 			class="screen-sticker"

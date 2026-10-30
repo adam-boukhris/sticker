@@ -1,5 +1,6 @@
 <script>
 	import Icon from './Icon.svelte';
+	import ScreenStickers from './ScreenStickers.svelte';
 	import './SiteFooter.css';
 	let { catalog } = $props();
 </script>
@@ -25,7 +26,10 @@
 			>
 		</div>
 
-		<div class="footer-brand">{catalog.brand.name}</div>
+		<div class="footer-brand-row">
+			<div class="footer-brand">{catalog.brand.name}</div>
+			<ScreenStickers stickers={catalog.screenStickers.slice(4)} placement="footer" />
+		</div>
 		<p class="footer-subhead">{catalog.brand.tagline}</p>
 		<div class="squiggle" aria-hidden="true">
 			<Icon name="sparkling-line" />

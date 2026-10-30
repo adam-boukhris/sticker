@@ -36,13 +36,19 @@
 .footer-banner .btn {
 	flex: none;
 }
+.footer-brand-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 48px;
+}
 .footer-brand {
 	font-family: 'Syne', sans-serif;
 	font-size: clamp(50px, 5.8vw, 74px);
 	line-height: 1;
 	font-weight: 800;
 	letter-spacing: -0.065em;
-	margin-top: 48px;
 }
 .footer-subhead {
 	font-size: 11px;
@@ -190,6 +196,8 @@
 	}
 	.footer-brand {
 		font-size: clamp(50px, 12vw, 70px);
+	}
+	.footer-brand-row {
 		margin-top: 42px;
 	}
 	.footer-columns {
@@ -212,7 +220,11 @@
 
 @media (max-width: 375px) {
 	.footer-brand {
-		font-size: 42px;
+		font-size: 38px;
+	}
+	.footer-brand-row .screen-stickers.footer {
+		width: 62px;
+		height: 62px;
 	}
 	.footer-columns {
 		grid-template-columns: 1fr;

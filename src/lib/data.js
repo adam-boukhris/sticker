@@ -168,50 +168,44 @@ export const catalog = {
 			description: 'Each sticker pack is prepared with care.'
 		}
 	],
-	stickers: [
-		{ id: 'flower', icon: 'flower-fill', label: 'flower' },
-		{ id: 'heart', icon: 'heart-fill', label: 'heart' },
-		{ id: 'star', icon: 'star-fill', label: 'star' },
-		{ id: 'smile', icon: 'emotion-happy-fill', label: 'smiley face' }
-	],
 	screenStickers: [
 		{
 			id: 'love-it',
 			image: { url: '/Love It.png', alt: 'Love It hand sign sticker', width: 828, height: 783 },
-			left: '3vw',
-			top: '18vh',
+			left: '2%',
+			top: '15%',
 			size: 105,
 			mobileSize: 61
 		},
 		{
 			id: 'vibes',
 			image: { url: '/Vibes.png', alt: 'Vibes rainbow sticker', width: 1033, height: 562 },
-			left: '86vw',
-			top: '23vh',
+			left: '88%',
+			top: '18%',
 			size: 119,
 			mobileSize: 78
 		},
 		{
 			id: 'not-sure',
 			image: { url: '/Not Sure.png', alt: 'Not Sure hand sign sticker', width: 1158, height: 868 },
-			left: '2vw',
-			top: '58vh',
+			left: '2%',
+			top: '70%',
 			size: 115,
 			mobileSize: 75
 		},
 		{
 			id: 'peek',
 			image: { url: '/Take a Peek.png', alt: 'Take a Peek eyes sticker', width: 831, height: 856 },
-			left: '87vw',
-			top: '59vh',
+			left: '89%',
+			top: '70%',
 			size: 100,
 			mobileSize: 65
 		},
 		{
 			id: 'killed-it',
 			image: { url: '/Killed It.png', alt: 'Killed It skull sticker', width: 801, height: 755 },
-			left: '46vw',
-			top: '78vh',
+			left: '0',
+			top: '0',
 			size: 94,
 			mobileSize: 59
 		}

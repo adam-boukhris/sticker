@@ -4,7 +4,7 @@
 	import Icon from '$lib/components/Icon.svelte';
 	import PackCard from '$lib/components/PackCard.svelte';
 	import FeatureCard from '$lib/components/FeatureCard.svelte';
-	import FloatingStickers from '$lib/components/FloatingStickers.svelte';
+	import ScreenStickers from '$lib/components/ScreenStickers.svelte';
 	import './home.css';
 
 	let { data } = $props();
@@ -13,28 +13,9 @@
 	let soundOn = $state(true);
 	let toast = $state('');
 	let toastTimeout;
-	let heroSection;
 
 	onMount(() => {
-		const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
-		let frame = 0;
-		function updateScroll() {
-			frame = 0;
-			if (!heroSection || preference.matches) return;
-			const rect = heroSection.getBoundingClientRect();
-			const progress = Math.min(1, Math.max(0, -rect.top / Math.max(rect.height, 1)));
-			heroSection.style.setProperty('--hero-scroll', progress.toFixed(3));
-		}
-		function requestUpdate() {
-			if (!frame) frame = requestAnimationFrame(updateScroll);
-		}
-		updateScroll();
-		window.addEventListener('scroll', requestUpdate, { passive: true });
-		window.addEventListener('resize', requestUpdate, { passive: true });
 		return () => {
-			window.removeEventListener('scroll', requestUpdate);
-			window.removeEventListener('resize', requestUpdate);
-			if (frame) cancelAnimationFrame(frame);
 			clearTimeout(toastTimeout);
 		};
 	});
@@ -69,7 +50,7 @@
 </svelte:head>
 
 <main>
-	<section class="hero-section" bind:this={heroSection} aria-labelledby="hero-heading">
+	<section class="hero-section" aria-labelledby="hero-heading">
 		<div class="container hero-grid">
 			<div class="hero-copy" use:reveal>
 				<span class="eyebrow-pill yellow"
@@ -121,7 +102,7 @@
 				</p>
 			</aside>
 		</div>
-		<FloatingStickers stickers={catalog.stickers} />
+		<ScreenStickers stickers={catalog.screenStickers.slice(0, 4)} placement="hero" />
 	</section>
 
 	<section class="shop-section" id="shop" aria-labelledby="shop-heading">
